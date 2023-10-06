@@ -1,0 +1,28 @@
+body {
+  margin: 2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #e3fdfd;
+    color: #000000;
+  }
+}
+
+.button {
+  display: inline-block;
+  outline: 0;
+  border: 0;
+  cursor: pointer;
+  background: #000000;
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 14px 24px 16px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform 200ms, background 200ms;
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
