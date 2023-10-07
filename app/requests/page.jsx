@@ -13,7 +13,7 @@ function Requests() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    requester: "Unknown",
+    requester: "",
     language: "",
     tags: [],
   });
@@ -64,7 +64,7 @@ function Requests() {
       setFormData({
         title: "",
         description: "",
-        requester: user?.displayName || "Unknown",
+        requester: user?.displayName,
         language: "",
         tags: [],
       });
@@ -80,8 +80,12 @@ function Requests() {
   };
 
   return (
-    <div>
-      <h1>Requests</h1>
+    <div className={styles.abc}>
+      <h1>
+        <b>
+          <i>Requests</i>
+        </b>
+      </h1>
       <br />
       <button className="button" onClick={toggleFormVisibility}>
         {isFormVisible ? "Hide Form" : "Create Request"}
@@ -113,7 +117,7 @@ function Requests() {
               className={styles.input}
               type="text"
               name="requester"
-              placeholder="Requester"
+              placeholder="Name"
               value={formData.requester}
               onChange={handleInputChange}
             />
@@ -147,23 +151,25 @@ function Requests() {
       <ul className={styles.list}>
         {data.length > 0 ? (
           data.map((request, index) => (
-            <li key={request.id} className={styles.item}>
-              <div className={styles.content}>
-                <p>
-                  <span className={styles.label}>Title:</span> {request.title}{" "}
-                  <br />
-                  <span className={styles.label}>Description:</span>{" "}
-                  {request.description} <br />
-                  <span className={styles.label}>Requester:</span>{" "}
-                  {request.requester} <br />
-                  <span className={styles.label}>Language:</span>{" "}
-                  {request.language} <br />
-                  <span className={styles.label}>Tags:</span>{" "}
-                  {/* {request.tags.join(", ")} */}
-                </p>
-              </div>
-              {index < data.length - 1 && <hr className={styles.separator} />}
-            </li>
+            <div>
+              <li key={request.id} className={styles.item}>
+                <div className={styles.content}>
+                  <p>
+                    <span className={styles.label}>Title:</span> {request.title}{" "}
+                    <br />
+                    <span className={styles.label}>Description:</span>{" "}
+                    {request.description} <br />
+                    <span className={styles.label}>Requester:</span>{" "}
+                    {request.requester} <br />
+                    <span className={styles.label}>Language:</span>{" "}
+                    {request.language} <br />
+                    <span className={styles.label}>Tags:</span>{" "}
+                    {request.tags.join(", ")}
+                  </p>
+                </div>
+              </li>
+              <br />
+            </div>
           ))
         ) : (
           <li className={styles.noData}>No data Available</li>

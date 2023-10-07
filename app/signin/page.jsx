@@ -69,7 +69,6 @@ export default function Page() {
           <h3 className={styles.label}>Sign in with:</h3>
           <div className={styles.customBtn} onClick={handleSignIn}>
             <span className={styles.icon}></span>
-            <span className={styles.buttonText}>Google</span>
           </div>
           <br />
         </ul>
