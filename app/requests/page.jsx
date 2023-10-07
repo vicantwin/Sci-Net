@@ -13,21 +13,21 @@ function Requests() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    requester: user ? user.displayName : "Unknown",
+    requester: "Unknown",
     language: "",
-    tags: "",
+    tags: [],
   });
   const [isFormVisible, setFormVisible] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       try {
         const response = await getDocs(collection(db, "requests"));
         setData(response.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-    };
+    }
 
     fetchData();
   }, []);
@@ -64,7 +64,7 @@ function Requests() {
       setFormData({
         title: "",
         description: "",
-        requester: "",
+        requester: user?.displayName || "Unknown",
         language: "",
         tags: [],
       });
@@ -159,7 +159,7 @@ function Requests() {
                   <span className={styles.label}>Language:</span>{" "}
                   {request.language} <br />
                   <span className={styles.label}>Tags:</span>{" "}
-                  {request.tags.join(", ")}
+                  {/* {request.tags.join(", ")} */}
                 </p>
               </div>
               {index < data.length - 1 && <hr className={styles.separator} />}
