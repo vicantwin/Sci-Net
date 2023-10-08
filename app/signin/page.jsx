@@ -64,15 +64,7 @@ export default function Page() {
 
   return (
     <div className="body">
-      {loading ? null : !user ? (
-        <ul>
-          <h3 className={styles.label}>Sign in with:</h3>
-          <div className={styles.customBtn} onClick={handleSignIn}>
-            <span className={styles.icon}></span>
-          </div>
-          <br />
-        </ul>
-      ) : (
+      {loading ? null : user ? (
         <div>
           <p>
             Welcome, <b>{user.displayName}</b>
@@ -85,6 +77,14 @@ export default function Page() {
             </div>
           ) : null}
         </div>
+      ) : (
+        <ul>
+          <h3 className={styles.label}>Sign in with:</h3>
+          <div className={styles.customBtn} onClick={handleSignIn}>
+            <span className={styles.icon}></span>
+          </div>
+          <br />
+        </ul>
       )}
     </div>
   );

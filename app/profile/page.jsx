@@ -22,11 +22,11 @@ function Page() {
       ) : user ? (
         <div>
           <img src={user.photoURL} alt={user.displayName} />
-          <p>
+          <h1>
             Welcome, {user.displayName} - you are logged in to the profile page
             - a protected route.
-          </p>
-          <b>{user.email}</b>
+          </h1>
+          <h2>{user.email}</h2>
         </div>
       ) : (
         <p>You are NOT LOGGED IN!</p>

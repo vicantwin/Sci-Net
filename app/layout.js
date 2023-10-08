@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
         <AuthContextProvider>
           <Navbar />
           {children}
-          <Toaster />
+          <Toaster theme="system" richColors />
         </AuthContextProvider>
       </body>
     </html>

@@ -1,25 +1,97 @@
 "use client";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { db } from "../firebase/config";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { db, storage } from "../firebase/config";
+import { collection, getDocs, setDoc, doc } from "firebase/firestore";
 import styles from "../styles/requests.module.css";
+import { v4 as uuidv4 } from "uuid";
 import { UserAuth } from "../firebase/context/AuthContext";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { useRouter } from "next/navigation";
 
 function Requests() {
+  const navigate = useRouter();
   const { user } = UserAuth();
-  console.log(user);
   const [data, setData] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    requester: "",
+    requester: user?.displayName || "",
     language: "",
     tags: [],
   });
   const [isFormVisible, setFormVisible] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [docId, setDocId] = useState("");
+  const [fileUrl, setFileUrl] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+
+  // Function to handle file selection
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+  };
+
+  const uploadFile = async () => {
+    if (selectedFile) {
+      try {
+        const timestamp = new Date().getTime();
+        const fileName = `${timestamp}_${selectedFile.name}`;
+
+        const storageRef = ref(storage, `requests/${docId}/${fileName}`);
+
+        const uploadTask = uploadBytesResumable(storageRef, selectedFile);
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            toast.loading(`Upload is ${progress}% done`);
+          },
+          (error) => {
+            console.error("Error uploading file:", error);
+            toast.error("Error uploading file. Check console.");
+          },
+          () => {
+            toast.success("File uploaded successfully");
+            getDownloadURL(storageRef).then((url) => {
+              console.log("File URL:", url);
+
+              setFileUrl(url);
+            });
+          }
+        );
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        toast.error("Error uploading file. Check console.");
+      }
+    }
+  };
 
   useEffect(() => {
+    const filteredResults = data.filter((request) => {
+      // Customize this filtering logic based on your requirements.
+      // For example, you can search by title, description, requester, etc.
+      const searchFields = [
+        request.title,
+        request.description,
+        request.requester,
+        request.language,
+        request.tags.join(", "),
+      ];
+
+      return searchFields.some((field) =>
+        field.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    });
+
+    setFilteredData(filteredResults);
+  }, [searchQuery, data]);
+
+  useEffect(() => {
+    // sourcery skip: avoid-function-declarations-in-blocks
     async function fetchData() {
       try {
         const response = await getDocs(collection(db, "requests"));
@@ -30,7 +102,12 @@ function Requests() {
     }
 
     fetchData();
+    setDocId(uuidv4());
   }, []);
+
+  const handleSearchInputChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -52,15 +129,20 @@ function Requests() {
     console.log(title, description, requester, language, tags);
 
     try {
-      const docRef = await addDoc(collection(db, "requests"), {
+      await setDoc(doc(db, "requests", docId), {
         title,
         description,
         requester,
         language,
         tags,
+        fileUrl,
       });
 
-      toast.success(`Request Sent, with ID: ${docRef.id} !`);
+      toast.success(`Request Sent, with ID: '${docId}'!`, {
+        onAutoClose: (t) => {
+          window.location.reload(false);
+        },
+      });
       setFormData({
         title: "",
         description: "",
@@ -111,7 +193,7 @@ function Requests() {
             value={formData.description}
             onChange={handleInputChange}
           />
-          {!user ? (
+          {user ? null : (
             <input
               autoComplete="off"
               className={styles.input}
@@ -121,7 +203,7 @@ function Requests() {
               value={formData.requester}
               onChange={handleInputChange}
             />
-          ) : null}
+          )}
           <input
             autoComplete="off"
             className={styles.input}
@@ -143,16 +225,38 @@ function Requests() {
             value={formData.tags}
             onChange={handleTagInputChange}
           />
+          <input
+            type="file"
+            accept=".pdf, .docx, .jpg, .png, .gif" // Specify accepted file types
+            onChange={handleFileSelect}
+          />
+          <button className={styles.submit} onClick={uploadFile}>
+            Upload File
+          </button>
+          <br />
           <button className={styles.submit} onClick={handleSubmit}>
             Submit
           </button>
         </div>
       )}
+      <br />
+      <input
+        autoComplete="off"
+        className={styles.search}
+        type="text"
+        placeholder="Search"
+        value={searchQuery}
+        onChange={handleSearchInputChange}
+      />
       <ul className={styles.list}>
-        {data.length > 0 ? (
-          data.map((request, index) => (
+        {filteredData.length > 0 ? (
+          filteredData.map((request) => (
             <div>
-              <li key={request.id} className={styles.item}>
+              <li
+                key={request.id}
+                className={styles.item}
+                onClick={() => navigate.push(`/requests/${request.id}`)}
+              >
                 <div className={styles.content}>
                   <p>
                     <span className={styles.label}>Title:</span> {request.title}{" "}
@@ -161,6 +265,8 @@ function Requests() {
                     {request.description} <br />
                     <span className={styles.label}>Requester:</span>{" "}
                     {request.requester} <br />
+                    {/* <span className={styles.label}>File URL:</span>{" "}
+                    {request.fileUrl} <br /> */}
                     <span className={styles.label}>Language:</span>{" "}
                     {request.language} <br />
                     <span className={styles.label}>Tags:</span>{" "}
@@ -172,7 +278,7 @@ function Requests() {
             </div>
           ))
         ) : (
-          <li className={styles.noData}>No data Available</li>
+          <li className={styles.noData}>No Requests Found</li>
         )}
       </ul>
     </div>

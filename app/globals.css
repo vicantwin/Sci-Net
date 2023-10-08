@@ -6,9 +6,10 @@ body {
   font-family: "Gabarito", cursive;
   max-width: 100vw;
   font-weight: 400;
+  text-align: center;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   body {
     background: #e3fdfd;
     color: #000000;
