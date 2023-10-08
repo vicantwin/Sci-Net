@@ -14,6 +14,15 @@ function Navbar() {
               Home
             </Link>
           </li>
+          <li className={styles.li}>
+            <a
+              target="_blank"
+              className={styles.a}
+              href="https://github.com/TsugikuniVi/Sci-Net"
+            >
+              GitHub
+            </a>
+          </li>
           {user ? (
             <>
               <li className={styles.li}>
