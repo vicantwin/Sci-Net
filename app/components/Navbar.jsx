@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { UserAuth } from "../firebase/context/AuthContext";
 import styles from "../styles/navbar.module.css";
@@ -13,18 +14,7 @@ function Navbar() {
               Home
             </Link>
           </li>
-          {/* <li className={styles.li}>
-            <img src="/next.svg" alt="Logo" className={styles.logo} />
-          </li> */}
-          {!user ? (
-            <>
-              <li className={styles.li}>
-                <Link className={styles.a} href="/signin">
-                  Login
-                </Link>
-              </li>
-            </>
-          ) : (
+          {user ? (
             <>
               <li className={styles.li}>
                 <Link className={styles.a} href="/profile">
@@ -34,6 +24,14 @@ function Navbar() {
               <li className={styles.li}>
                 <Link className={styles.a} href={"/signin"}>
                   Account Page
+                </Link>
+              </li>
+            </>
+          ) : (
+            <>
+              <li className={styles.li}>
+                <Link className={styles.a} href="/signin">
+                  Login
                 </Link>
               </li>
             </>

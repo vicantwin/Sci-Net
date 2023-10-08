@@ -21,7 +21,7 @@ function Page() {
         <Spinner />
       ) : user ? (
         <div>
-          <img src={user.photoURL} alt={user.displayName} />
+          <img src={user.photoURL} alt={user.displayName} width={"200px"} />
           <h1>
             Welcome, {user.displayName} - you are logged in to the profile page
             - a protected route.

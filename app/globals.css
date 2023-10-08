@@ -1,9 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Gabarito&family=Josefin+Sans:ital,wght@1,600&display=swap");
-
 body {
   margin: 2rem;
   background-color: lightblue;
-  font-family: "Gabarito", cursive;
   max-width: 100vw;
   font-weight: 400;
   text-align: center;

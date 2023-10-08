@@ -66,9 +66,9 @@ export default function Page() {
     <div className="body">
       {loading ? null : user ? (
         <div>
-          <p>
-            Welcome, <b>{user.displayName}</b>
-          </p>
+          <h1>
+            Welcome, <i>{user.displayName}</i>
+          </h1>
           <button onClick={handleSignOut}>Sign out</button>
           {user.displayName === process.env.NEXT_PUBLIC_ADMIN_NAME ? (
             <div>
